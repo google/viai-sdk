@@ -1,0 +1,4 @@
+google-auth
+google-oauth
+google-cloud
+google-cloud-storage
