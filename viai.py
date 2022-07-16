@@ -125,6 +125,7 @@ class Solution:
             self.annotationSets = self._getAnnotationSets()
             self.annotationSpecs = self._getAnnotationSpecs()
             self.images = self._getImages()
+            self.modules = self._getModules()
         
         except Exception as e:
             raise e
@@ -139,8 +140,9 @@ class Solution:
         annotationSets = list()
         
         data = r.json()
-        for a in data['annotationSets']:
-            annotationSets.append(AnnotationSet(a, self.VIAI))
+        if 'annotationSets' in data.keys():
+            for a in data['annotationSets']:
+                annotationSets.append(AnnotationSet(a, self.VIAI))
             
         return annotationSets
     
@@ -154,8 +156,9 @@ class Solution:
         annotationSpecs = list()
         
         data = r.json()
-        for a in data['annotationSpecs']:
-            annotationSpecs.append(AnnotationSpec(a, self.VIAI))
+        if 'annotationSpecs' in data.keys():
+            for a in data['annotationSpecs']:
+                annotationSpecs.append(AnnotationSpec(a, self.VIAI))
             
         return annotationSpecs 
     
@@ -169,10 +172,41 @@ class Solution:
         images = list()
         
         data = r.json()
-        for a in data['images']:
-            images.append(Image(a, self.VIAI))
+        if 'images' in data.keys():
+            for a in data['images']:
+                images.append(Image(a, self.VIAI))
             
-        return images             
+        return images
+    
+    def _getModules(self):
+        
+        '''Pulls associated modules for a solution.
+        Returns a list of Module objects'''
+        
+        modules_url = "{}/{}/{}".format(self.VIAI.apiUrl, self.name, 'modules')
+        r = requests.get(modules_url, headers=self.VIAI.requestHeader)
+        
+        modules = list()
+        
+        data = r.json()
+        if 'modules' in data.keys():
+            for a in data['modules']:
+                modules.append(Module(a, self.VIAI))
+            
+        return modules        
+
+    
+class Module:
+    '''A VIAI Solution Module'''
+    
+    def __init__(self, data, VIAI):
+        
+        self.url = "{}/{}".format(VIAI.apiUrl, data['name'])
+        for k,v in data.items():
+            if type(v) is dict:
+                exec("self.{} = {}".format(k,v))
+            else:
+                exec("self.{} = '{}'".format(k,v))           
 
 class AuthCredentialException(Exception):
     '''An exception for issues with GCP Authentication'''
