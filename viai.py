@@ -24,7 +24,7 @@ class VIAI:
     '''The primary class for handling VIAI objects effectively in Python 
     applications'''
     
-    def __init__(self, keyfile=None, region='us-central1'):
+    def __init__(self, keyfile=None, region='us-central1', loadAll=False):
         self.author = 'Jamie Duncan'
 
         self.region = 'us-central1'
@@ -35,7 +35,20 @@ class VIAI:
         self.requestHeader = {"Authorization": "Bearer {}".format(self.credentials.token)}
         
         self.solutions = self._getSolutions()
+        if loadAll == True:
+            self._loadAllSolutions()
         
+    def _loadAllSolutions(self):
+        '''A helper function to load all solutions in a VIAI object. Depending on the number of datasets and images,
+        this can be time-consuming.'''
+        
+        try:
+            for s in self.solutions:
+                s.load()
+        except Exception as e:
+            raise e
+            
+                
     def _getAuthCredentials(self, keyfile):
         '''internal function to create a valid Google authenticated session and generate a JWT token
         inputs:
@@ -102,9 +115,19 @@ class Solution:
         
         self.url = "{}/{}".format(VIAI.apiUrl, data['name'])        
         self.datasetUrl = "{}/projects/{}/locations/{}/datasets/{}".format(VIAI.apiUrl, VIAI.projectId, VIAI.region, self.datasetId)
-        self.annotationSets = self._getAnnotationSets()
-        self.annotationSpecs = self._getAnnotationSpecs()
-        self.images = self._getImages()
+        
+        
+    def load(self):
+        '''Loads the various API endpoints for the solution. This is used to save time at instance
+        startup for busy environments'''
+        
+        try:
+            self.annotationSets = self._getAnnotationSets()
+            self.annotationSpecs = self._getAnnotationSpecs()
+            self.images = self._getImages()
+        
+        except Exception as e:
+            raise e
         
     def _getAnnotationSets(self):
         '''Pulls associated annotation sets for a Dataset/Solution
