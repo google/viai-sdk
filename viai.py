@@ -196,18 +196,6 @@ class Solution:
         return modules        
 
     
-class Module:
-    '''A VIAI Solution Module'''
-    
-    def __init__(self, data, VIAI):
-        
-        self.url = "{}/{}".format(VIAI.apiUrl, data['name'])
-        for k,v in data.items():
-            if type(v) is dict:
-                exec("self.{} = {}".format(k,v))
-            else:
-                exec("self.{} = '{}'".format(k,v))           
-
 class AuthCredentialException(Exception):
     '''An exception for issues with GCP Authentication'''
     
