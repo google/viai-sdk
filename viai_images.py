@@ -1,5 +1,6 @@
 import json
 import requests
+import re
 from google.cloud import storage
 
 class Image:
@@ -15,6 +16,18 @@ class Image:
             else:
                 exec("self.{} = '{}'".format(k,v))
         self.annotations = self._getAnnotations()
+        
+    def getGcsBlob(self):
+        '''Returns a GCS blob object for an Image'''
+        
+        # we need to massage the soruce string
+        bucket,filename = re.sub('gs://','', self.sourceGcsUri).split('/',1)
+        storage_client = storage.Client()
+        bkt = storage_client.get_bucket(bucket)
+        blob = bkt.blob(filename)
+                
+        return blob
+        
                 
     def _getAnnotations(self):
         '''gets annotations associated with an image

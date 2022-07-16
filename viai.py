@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
 import json
 import requests
 from google.oauth2 import service_account
@@ -23,7 +24,7 @@ class VIAI:
     '''The primary class for handling VIAI objects effectively in Python 
     applications'''
     
-    def __init__(self, keyfile='viai-key.json', region='us-central1'):
+    def __init__(self, keyfile=None, region='us-central1'):
         self.author = 'Jamie Duncan'
 
         self.region = 'us-central1'
@@ -46,18 +47,29 @@ class VIAI:
             ]
         
         try:
-            
+            if os.getenv('GOOGLE_APPLICATION_CREDENTIALS') is not None:
+                service_account_file = os.environ['GOOGLE_APPLICATION_CREDENTIALS']
+            elif keyfile is not None:
+                service_account_file = keyfile
+                os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = "{}/{}".format(os.getcwd(), keyfile)  # set the variable for other libraries
+            else:
+                raise AuthCredentialException
+                
             credentials = service_account.Credentials.from_service_account_file(
-                keyfile,
+                service_account_file,
                 scopes=scopes)
             request = Request()
             credentials.refresh(request)
             
             return credentials
         
-        except Exception as e:
+        except AuthCredentialException as e:
+            print(e.msg)
             raise e
-        
+     
+        except Exception as e:
+            raise e                
+
         
     def _getSolutions(self):
         '''A list of all active solution/datasets for a Project
@@ -138,6 +150,12 @@ class Solution:
             images.append(Image(a, self.VIAI))
             
         return images             
+
+class AuthCredentialException(Exception):
+    '''An exception for issues with GCP Authentication'''
+    
+    def __init__(self):
+        self.msg = "{}: Unable to load any valid GCP Service Account Files".format(self.__class__.__name__.upper())
 
         
    
