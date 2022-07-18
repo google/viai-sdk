@@ -38,10 +38,42 @@ class Model:
     def __init__(self, data, VIAI):
         
         self.url = "{}/{}".format(VIAI.apiUrl, data['name'])
+        self.VIAI = VIAI
         for k,v in data.items():
             if type(v) is dict:
                 exec("self.{} = {}".format(k,v))
             elif type(v) is list:
                 exec("self.{} = list({})".format(k,v))
             else:
-                exec("self.{} = '{}'".format(k,v))  
+                exec("self.{} = '{}'".format(k,v))
+        self.evaluations = self._getEvaluations()
+                
+    def _getEvaluations(self):
+        '''Used to fetch model evaluations. 
+        Returns a list of ModelEvaluation objects'''
+
+        evaluations = list()
+
+        if self.evaluationIds:
+            for evaluation in self.evaluationIds: 
+                url = "{}/modelEvaluations/{}".format(self.url, evaluation)
+                r = requests.get(url, headers=self.VIAI.requestHeader)        
+                
+                data = r.json()
+                evaluations.append(ModelEvaluation(data, self.VIAI))
+                            
+            return evaluations
+                
+class ModelEvaluation:
+    '''A VIAI Model Evaluation'''
+    
+    def __init__(self, data, VIAI):
+        
+        self.url = "{}/{}".format(VIAI.apiUrl, data['name'])
+        for k,v in data.items():
+            if type(v) is dict:
+                exec("self.{} = {}".format(k,v))
+            elif type(v) is list:
+                exec("self.{} = list({})".format(k,v))
+            else:
+                exec("self.{} = '{}'".format(k,v))   
