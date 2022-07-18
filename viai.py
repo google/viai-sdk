@@ -18,6 +18,7 @@ import requests
 from google.oauth2 import service_account
 from google.auth.transport.requests import Request
 from viai_images import Image, Annotation, AnnotationSet, AnnotationSpec
+from viai_modules import Module, Model
 
 
 class VIAI:

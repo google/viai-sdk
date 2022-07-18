@@ -20,7 +20,7 @@ class Module:
     def _getModels(self):
         '''a getter function for the VIAI Model Class'''
         
-        models_url = "{}/{}/{}".format(self.url, 'models')
+        models_url = "{}/{}".format(self.url, 'models')
         r = requests.get(models_url, headers=self.VIAI.requestHeader)
         
         models = list()
@@ -28,11 +28,11 @@ class Module:
         data = r.json()
         if 'models' in data.keys():
             for a in data['models']:
-                modules.append(Module(a, self.VIAI))
+                models.append(Model(a, self.VIAI))
             
         return models  
                 
-class Models:
+class Model:
     '''A VIAI Module Model'''
     
     def __init__(self, data, VIAI):
@@ -41,5 +41,7 @@ class Models:
         for k,v in data.items():
             if type(v) is dict:
                 exec("self.{} = {}".format(k,v))
+            elif type(v) is list:
+                exec("self.{} = list({})".format(k,v))
             else:
                 exec("self.{} = '{}'".format(k,v))  
