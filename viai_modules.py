@@ -76,4 +76,5 @@ class ModelEvaluation:
             elif type(v) is list:
                 exec("self.{} = list({})".format(k,v))
             else:
-                exec("self.{} = '{}'".format(k,v))   
+                exec("self.{} = '{}'".format(k,v))
+                
