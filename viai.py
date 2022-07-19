@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import os
+import logging
 import json
 import requests
 from google.oauth2 import service_account
@@ -25,6 +26,7 @@ class VIAI:
     applications'''
     
     def __init__(self, keyfile=None, region='us-central1', loadAll=False):
+        self.log = self._configureLogging()
         self.author = 'Jamie Duncan'
 
         self.region = 'us-central1'
@@ -36,6 +38,7 @@ class VIAI:
         
         self.solutions = self._getSolutions()
         if loadAll == True:
+            self.log.debug("Loading All Solutions")
             self._loadAllSolutions()
         
     def _loadAllSolutions(self):
@@ -44,11 +47,35 @@ class VIAI:
         
         try:
             for s in self.solutions:
+                self.log.debug("Loading Solution - {}".format(s))
                 s.load()
         except Exception as e:
             raise e
+        
+    def _configureLogging(self):
+        '''Initial logging configuration'''
+        
+        logFormatter = logging.Formatter("%(asctime)s [%(levelname)s]  %(message)s")
+        rootLogger = logging.getLogger()
+        
+        consoleHandler = logging.StreamHandler()
+        consoleHandler.setFormatter(logFormatter)
+        rootLogger.addHandler(consoleHandler)
+        rootLogger.setLevel(logging.INFO)
+        
+        return rootLogger
+        
+    def setLogLevel(self, loglevel):
+        '''Sets a log-level for an instance of VIAI'''
+        
+        try:
+            loglevel = loglevel.upper()
+            self.log.setLevel(loglevel)
+            self.log.info("Set logging level to {}".format(loglevel))
             
-                
+        except Exception as e:
+            raise e
+                       
     def _getAuthCredentials(self, keyfile):
         '''internal function to create a valid Google authenticated session and generate a JWT token
         inputs:
@@ -62,8 +89,10 @@ class VIAI:
         try:
             if os.getenv('GOOGLE_APPLICATION_CREDENTIALS') is not None:
                 service_account_file = os.environ['GOOGLE_APPLICATION_CREDENTIALS']
+                self.log.debug("using GOOGLE_APPLICATION_CREDENTIALS variable - {}".format(service_account_file))
             elif keyfile is not None:
                 service_account_file = keyfile
+                self.log.debug("using keyfile parameter - {}".format(service_account_file))
                 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = "{}/{}".format(os.getcwd(), keyfile)  # set the variable for other libraries
             else:
                 raise AuthCredentialException
@@ -73,6 +102,7 @@ class VIAI:
                 scopes=scopes)
             request = Request()
             credentials.refresh(request)
+            self.log.debug("Successfully Authenticated to GCP")
             
             return credentials
         
@@ -89,14 +119,18 @@ class VIAI:
         The objects in the list are Solution obects, which have a 1:1 relationship
         with Datasets'''
 
+        self.log.debug("Loading Solutions")
         solutionsUrl = "{}/projects/{}/locations/{}/solutions".format(self.apiUrl, self.projectId, self.region)
         request = requests.get(solutionsUrl, headers=self.requestHeader)
         
         solutions = list()
         data = request.json()
         
+        sol_count = 0
         for s in data['solutions']:
+            self.log.debug("Loading Solution - {}".format(sol_count))
             solutions.append(Solution(s, self))
+            sol_count += 1
     
         return solutions
     
@@ -105,8 +139,4 @@ class AuthCredentialException(Exception):
     
     def __init__(self):
         self.msg = "{}: Unable to load any valid GCP Service Account Files".format(self.__class__.__name__.upper())
-
         
-   
-
-

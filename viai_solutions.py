@@ -10,6 +10,10 @@ class Solution:
     def __init__(self, data, VIAI):
        
         self.VIAI = VIAI
+        self.log = VIAI.log
+        self.requestHeader = VIAI.requestHeader
+        
+        self.log.debug("Loading Solution Options")
         for k,v in data.items():
             if type(v) is dict:
                 exec("self.{} = {}".format(k,v))
@@ -25,6 +29,7 @@ class Solution:
         startup for busy environments'''
         
         try:
+            self.log.info("Loading Solution Data- {}".format(self.displayName   ))
             self.annotationSets = self._getAnnotationSets()
             self.annotationSpecs = self._getAnnotationSpecs()
             self.images = self._getImages()
@@ -39,17 +44,20 @@ class Solution:
         Returns a list of SolutionArtifact objects'''
         
         solutionartifact_url = "{}/{}".format(self.url, 'solutionArtifacts')
-        r = requests.get(solutionartifact_url, headers=self.VIAI.requestHeader)
+        r = requests.get(solutionartifact_url, headers=self.requestHeader)
         
         solutionArtifacts = list()
         
         if r.status_code == 200:
+            self.log.debug("Successfully Retrieved Solution Artifacts")
             data = r.json()
             if 'solutionArtifacts' in data.keys():
                 for a in data['solutionArtifacts']:
                     solutionArtifacts.append(SolutionArtifact(a, self.VIAI))
                 
-            return solutionArtifacts        
+            return solutionArtifacts
+        else: 
+            self.log.debug("Unable to Retrieve Solution Artifact - Response Code: {}",format(r.status_code)) 
         
         
     def _getAnnotationSets(self):
@@ -57,14 +65,17 @@ class Solution:
         Returns a list of AnnoationSet objects'''
         
         annotationset_url = "{}/{}".format(self.datasetUrl, 'annotationSets')
-        r = requests.get(annotationset_url, headers=self.VIAI.requestHeader)
+        r = requests.get(annotationset_url, headers=self.requestHeader)
         
         annotationSets = list()
         
         data = r.json()
         if 'annotationSets' in data.keys():
             for a in data['annotationSets']:
+                self.log.debug("Annotation Set Retrieved - {}".format(a['name']))
                 annotationSets.append(AnnotationSet(a, self.VIAI))
+        else:
+            self.log.debug("No Annotation Sets Available")
             
         return annotationSets
     
@@ -73,14 +84,17 @@ class Solution:
         Returns a list of AnnotationSpec objects'''
         
         annotationspec_url = "{}/{}".format(self.datasetUrl, 'annotationSpecs')
-        r = requests.get(annotationspec_url, headers=self.VIAI.requestHeader)
+        r = requests.get(annotationspec_url, headers=self.requestHeader)
         
         annotationSpecs = list()
         
         data = r.json()
         if 'annotationSpecs' in data.keys():
             for a in data['annotationSpecs']:
+                self.log.debug("Loading Annotation Spec - {}".format(a['name']))
                 annotationSpecs.append(AnnotationSpec(a, self.VIAI))
+        else:
+            self.log.debug("No Annation Specs Available")
             
         return annotationSpecs 
     
@@ -89,14 +103,17 @@ class Solution:
         Returns a list of Image objects'''
         
         images_url = "{}/{}".format(self.datasetUrl, 'images')
-        r = requests.get(images_url, headers=self.VIAI.requestHeader)
+        r = requests.get(images_url, headers=self.requestHeader)
         
         images = list()
         
         data = r.json()
         if 'images' in data.keys():
             for a in data['images']:
+                self.log.debug("Loading Image - {}".format(a['name']))
                 images.append(Image(a, self.VIAI))
+        else:
+            self.log.debug("No Images Available")
             
         return images
     
@@ -106,14 +123,17 @@ class Solution:
         Returns a list of Module objects'''
         
         modules_url = "{}/{}/{}".format(self.VIAI.apiUrl, self.name, 'modules')
-        r = requests.get(modules_url, headers=self.VIAI.requestHeader)
+        r = requests.get(modules_url, headers=self.requestHeader)
         
         modules = list()
         
         data = r.json()
         if 'modules' in data.keys():
             for a in data['modules']:
+                self.log.debug("Loading Module - {}".format(a['name']))
                 modules.append(Module(a, self.VIAI))
+        else:
+            self.log.debug("No Modules Available")
             
         return modules        
 
@@ -124,11 +144,18 @@ class SolutionArtifact:
         
         self.url = "{}/{}".format(VIAI.apiUrl, data['name'])
         self.VIAI = VIAI
+        self.log = VIAI.log
         
-        for k,v in data.items():
-            if type(v) is dict:
-                exec("self.{} = {}".format(k,v))
-            elif type(v) is list:
-                exec("self.{} = list({})".format(k,v))
-            else:
-                exec("self.{} = '{}'".format(k,v))
+        try: 
+            self.log.debug("Loading SolutionArtifact Options")
+            for k,v in data.items():
+                if type(v) is dict:
+                    exec("self.{} = {}".format(k,v))
+                elif type(v) is list:
+                    exec("self.{} = list({})".format(k,v))
+                else:
+                    exec("self.{} = '{}'".format(k,v))
+        
+        except Exception as e:
+            self.log.debug("Unable to Load Solution Artifacts")
+            raise e
