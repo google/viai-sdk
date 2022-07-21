@@ -18,42 +18,28 @@ import json
 import requests
 from google.oauth2 import service_account
 from google.auth.transport.requests import Request
-from viai_solutions import Solution
+from viai.solutions import Solution
 
 
 class VIAI:
     '''The primary class for handling VIAI objects effectively in Python 
     applications'''
     
-    def __init__(self, keyfile=None, region='us-central1', loadAll=False):
+    def __init__(self, keyfile=None, connect=True, region='us-central1'):
+        
         self.log = self._configureLogging()
-        self.author = 'Jamie Duncan'
-
-        self.region = 'us-central1'
+        
         self.apiUrl = "https://visualinspection.googleapis.com/v1"
-        self.credentials = self._getAuthCredentials(keyfile)  
-        self.projectId = self.credentials.project_id
+        self.requestHeader = dict()
+        self.projectId = str()
         self.region = region
-        self.requestHeader = {"Authorization": "Bearer {}".format(self.credentials.token)}
         
-        self.solutions = self._getSolutions()
-        if loadAll == True:
-            self.log.debug("Loading All Solutions")
-            self._loadAllSolutions()
-        
-    def _loadAllSolutions(self):
-        '''A helper function to load all solutions in a VIAI object. Depending on the number of datasets and images,
-        this can be time-consuming.'''
-        
-        try:
-            for s in self.solutions:
-                self.log.debug("Loading Solution - {}".format(s))
-                s.load()
-        except Exception as e:
-            raise e
-        
+        if connect == True:
+            self.credentials = self._getAuthCredentials(keyfile)     
+            self.solutions = self._getSolutions()
+            
     def _configureLogging(self):
-        '''Initial logging configuration'''
+        '''Configures logging for a class'''
         
         logFormatter = logging.Formatter("%(asctime)s [%(levelname)s]  %(message)s")
         rootLogger = logging.getLogger()
@@ -64,6 +50,18 @@ class VIAI:
         rootLogger.setLevel(logging.INFO)
         
         return rootLogger
+        
+    def loadAllSolutions(self):
+        '''A helper function to load all solutions in a VIAI object. Depending on the number of datasets and images,
+        this can be time-consuming.'''
+        
+        try:
+            self.log.debug("Loading all solutions")
+            for s in self.solutions:
+                self.log.debug("Loading Solution - {}".format(s))
+                s.load()
+        except Exception as e:
+            raise e
         
     def setLogLevel(self, loglevel):
         '''Sets a log-level for an instance of VIAI'''
@@ -102,6 +100,9 @@ class VIAI:
                 scopes=scopes)
             request = Request()
             credentials.refresh(request)
+            
+            self.projectId = credentials.project_id
+            self.requestHeader = {"Authorization": "Bearer {}".format(credentials.token)}
             self.log.debug("Successfully Authenticated to GCP")
             
             return credentials
@@ -119,20 +120,29 @@ class VIAI:
         The objects in the list are Solution obects, which have a 1:1 relationship
         with Datasets'''
 
-        self.log.debug("Loading Solutions")
-        solutionsUrl = "{}/projects/{}/locations/{}/solutions".format(self.apiUrl, self.projectId, self.region)
-        request = requests.get(solutionsUrl, headers=self.requestHeader)
+        try: 
+            self.log.debug("Loading Solutions")
+            solutionsUrl = "{}/projects/{}/locations/{}/solutions".format(self.apiUrl, self.projectId, self.region)
+            request = requests.get(solutionsUrl, headers=self.requestHeader)
+            
+            if request.status_code == 200:
+                solutions = list()
+                data = request.json()
+                
+                sol_count = 0
+                for s in data['solutions']:
+                    self.log.debug("Loading Solution - {}".format(sol_count))
+                    solutions.append(Solution(s, self))
+                    sol_count += 1
         
-        solutions = list()
-        data = request.json()
-        
-        sol_count = 0
-        for s in data['solutions']:
-            self.log.debug("Loading Solution - {}".format(sol_count))
-            solutions.append(Solution(s, self))
-            sol_count += 1
-    
-        return solutions
+                return solutions
+            
+            else:
+                self.log.debug("Unable to Access VIAI API - {}".format(solutionsUrl))
+                
+        except Exception as e: 
+            self.log.debug("Unable to Get Solutions")
+            raise e
     
 class AuthCredentialException(Exception):
     '''An exception for issues with GCP Authentication'''

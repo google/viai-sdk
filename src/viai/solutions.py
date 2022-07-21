@@ -10,13 +10,14 @@
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
-# limitations under the License.
+# limitations under the License
 
 import os
 import json
 import requests
-from viai_images import Image, AnnotationSet, AnnotationSpec
-from viai_modules import Module
+import logging
+from viai.images import Image, AnnotationSet, AnnotationSpec
+from viai.modules import Module
 
 class Solution:
     '''A VIAI Solution object'''
@@ -26,6 +27,7 @@ class Solution:
         self.VIAI = VIAI
         self.log = VIAI.log
         self.requestHeader = VIAI.requestHeader
+        self.apiUrl = VIAI.apiUrl
         
         self.log.debug("Loading Solution Options")
         for k,v in data.items():
@@ -34,9 +36,8 @@ class Solution:
             else:
                 exec("self.{} = '{}'".format(k,v)) 
         
-        self.url = "{}/{}".format(VIAI.apiUrl, data['name'])        
-        self.datasetUrl = "{}/projects/{}/locations/{}/datasets/{}".format(VIAI.apiUrl, VIAI.projectId, VIAI.region, self.datasetId)
-        
+        self.url = "{}/{}".format(self.apiUrl, data['name'])        
+        self.datasetUrl = "{}/projects/{}/locations/{}/datasets/{}".format(self.apiUrl, VIAI.projectId, VIAI.region, self.datasetId)     
         
     def load(self):
         '''Loads the various API endpoints for the solution. This is used to save time at instance
@@ -136,7 +137,7 @@ class Solution:
         '''Pulls associated modules for a solution.
         Returns a list of Module objects'''
         
-        modules_url = "{}/{}/{}".format(self.VIAI.apiUrl, self.name, 'modules')
+        modules_url = "{}/{}/{}".format(self.apiUrl, self.name, 'modules')
         r = requests.get(modules_url, headers=self.requestHeader)
         
         modules = list()
@@ -156,7 +157,7 @@ class SolutionArtifact:
     
     def __init__(self, data, VIAI):
         
-        self.url = "{}/{}".format(VIAI.apiUrl, data['name'])
+        self.url = "{}/{}".format(self.apiUrl, data['name'])
         self.VIAI = VIAI
         self.log = VIAI.log
         

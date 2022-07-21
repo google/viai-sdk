@@ -15,6 +15,7 @@
 import json
 import requests
 import re
+import logging
 from google.cloud import storage
 
 class Image:
@@ -22,9 +23,9 @@ class Image:
     
     def __init__(self, data, VIAI):
         
-        self.url = "{}/{}".format(VIAI.apiUrl, data['name'])
-        self.VIAI = VIAI
         self.log = VIAI.log
+        self.VIAI = VIAI
+        self.url = "{}/{}".format(VIAI.apiUrl, data['name'])
         
         self.log.debug("Loading Image Options")
         for k,v in data.items():
@@ -32,6 +33,7 @@ class Image:
                 exec("self.{} = {}".format(k,v))
             else:
                 exec("self.{} = '{}'".format(k,v))
+                
         self.annotations = self._getAnnotations()
         
     def getGcsBlob(self):
@@ -84,6 +86,7 @@ class Annotation:
             self.log.debug("Loading Annotation Parameters")
             for k,v in data.items():
                 if type(v) is dict:
+                    # Issue #3 would go here
                     exec("self.{} = {}".format(k,v))
                 else:
                     exec("self.{} = '{}'".format(k,v))
