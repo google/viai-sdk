@@ -28,6 +28,7 @@ class VIAI:
     def __init__(self, keyfile=None, connect=True, region='us-central1'):
         
         self.log = self._configureLogging()
+        self.version = 0.0.1
         
         self.apiUrl = "https://visualinspection.googleapis.com/v1"
         self.requestHeader = dict()

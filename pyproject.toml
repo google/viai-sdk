@@ -14,10 +14,18 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 
+[project.optional-dependencies]
+dev = [
+    "nose2",
+    "coverage",
+    "bump2version"
+]
+
 [project.urls]
 "Homepage" = "https://gitlab.com/jamieduncan1/viai-sdk"
 "Bug Tracker" = "https://gitlab.com/jamieduncan1/viai-sdk/issues"
 
 [build-system]
-requires = ["nose2"]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
 
