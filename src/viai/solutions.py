@@ -122,8 +122,8 @@ class Solution:
         
         images = list()
         
-        data = r.json()
-        if 'images' in data.keys():
+        if r.status_code == 200:
+            data = r.json()
             for a in data['images']:
                 self.log.debug("Loading Image - {}".format(a['name']))
                 images.append(Image(a, self.VIAI))
@@ -157,8 +157,8 @@ class SolutionArtifact:
     
     def __init__(self, data, VIAI):
         
-        self.url = "{}/{}".format(self.apiUrl, data['name'])
         self.VIAI = VIAI
+        self.url = "{}/{}".format(VIAI.apiUrl, data['name'])
         self.log = VIAI.log
         
         try: 

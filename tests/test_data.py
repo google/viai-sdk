@@ -1,3 +1,7 @@
+from unittest.mock import patch, Mock
+from viai import VIAI
+
+
 def getSolutionApiData():
     
     solution_api_data = {'solutions': 
@@ -94,3 +98,69 @@ def getAnnotationApiData():
      ]}
     
     return annotation_api_data
+
+def getAnnotationSetApiData():
+    
+    annoation_set_api_data = {'annotationSets': 
+        [{'name': 'projects/953081663119/locations/us-central1/datasets/6706706469108056064/annotationSets/4513015844950769664', 
+          'displayName': 'Preview Classification Predictions for models/213111741742055424', 
+          'classificationLabel': {}, 
+          'createTime': '2022-07-16T05:25:06.641668Z', 
+          'updateTime': '2022-07-16T05:25:07.229575Z'}, 
+         {'name': 'projects/953081663119/locations/us-central1/datasets/6706706469108056064/annotationSets/8871655859315277824', 
+          'displayName': 'Suggested-To-Label for models/213111741742055424', 
+          'classificationLabel': {}, 
+          'createTime': '2022-07-16T05:25:05.337978Z', 
+          'updateTime': '2022-07-16T05:25:06.028235Z'}, 
+         {'name': 'projects/953081663119/locations/us-central1/datasets/6706706469108056064/annotationSets/2210832010434314240', 
+          'displayName': 'Preview Object Region Predictions for models/213111741742055424', 
+          'polygon': {}, 
+          'createTime': '2022-07-16T05:25:03.420088Z', 
+          'updateTime': '2022-07-16T05:25:04.440158Z'}, 
+         {'name': 'projects/953081663119/locations/us-central1/datasets/6706706469108056064/annotationSets/5345337351084179456', 
+          'displayName': 'Polygons Regions', 
+          'polygon': {}, 
+          'createTime': '2022-07-15T18:15:57.414388Z', 
+          'updateTime': '2022-07-15T19:59:02.432985Z'}, 
+         {'name': 'projects/953081663119/locations/us-central1/datasets/6706706469108056064/annotationSets/6423949461839413248', 
+          'displayName': 'Predicted Classification Labels', 
+          'classificationLabel': {}, 
+          'createTime': '2022-07-15T18:15:57.642610Z', 
+          'updateTime': '2022-07-15T18:15:57.642610Z'}, 
+         {'name': 'projects/953081663119/locations/us-central1/datasets/6706706469108056064/annotationSets/7718734354708430848', 
+          'displayName': 'Predicted Polygons Regions', 
+          'polygon': {}, 'createTime': '2022-07-15T18:15:57.564598Z', 
+          'updateTime': '2022-07-15T18:15:57.564598Z'}
+    ]}
+    
+    return annoation_set_api_data
+
+def mockSolutionViai():
+    
+    mock_get_patcher = patch('requests.get')
+    mock_get = mock_get_patcher.start()    
+    
+    mock_get.return_value.status_code = 200
+    mock_get.return_value.json.return_value = getSolutionApiData()
+    
+    mock_viai = VIAI(connect=False)
+    mock_viai.region = 'myregion'
+    mock_viai.projectId = 'myproject'
+    mock_viai.solutions = mock_viai._getSolutions()
+    mock_get_patcher.stop()
+    
+    return mock_viai
+
+def mockImageViai():
+    
+    mock_get_patcher = patch('requests.get')
+    mock_get = mock_get_patcher.start()    
+    
+    mock_get.return_value.status_code = 200
+    mock_get.return_value.json.return_value = getImageApiData()
+    
+    mock_viai = mockSolutionViai()  # a VIAI instance with mock'd solution data
+    mock_viai.images = mock_viai._getImages()
+    mock_get_patcher.stop()
+    
+    return mock_viai 

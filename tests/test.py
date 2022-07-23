@@ -9,23 +9,6 @@ from viai.images import Image, Annotation, AnnotationSet, AnnotationSpec
 import test_data
 
 
-def mockSolutionViai():
-    
-    mock_get_patcher = patch('requests.get')
-    mock_get = mock_get_patcher.start()    
-    
-    mock_get.return_value.status_code = 200
-    mock_get.return_value.json.return_value = test_data.getSolutionApiData()
-    
-    mock_viai = VIAI(connect=False)
-    mock_viai.region = 'myregion'
-    mock_viai.projectId = 'myproject'
-    mock_viai.solutions = mock_viai._getSolutions()
-    mock_get_patcher.stop()
-    
-    return mock_viai
-    
-
 class TestViai(unittest.TestCase):
 
     @patch('requests.get')
@@ -44,7 +27,7 @@ class TestViai(unittest.TestCase):
     def testImageModel(self):
         '''Loads an image object from a single image dict'''
                 
-        a= mockSolutionViai()
+        a= test_data.mockSolutionViai()
         c = Image(test_data.getImageData(), a)
         
         self.assertTrue(c.sourceGcsUri == 'gs://bucket1/image1.jpg') 
@@ -56,17 +39,26 @@ class TestViai(unittest.TestCase):
         mock_get.return_value.status_code = 200
         image_data = test_data.getImageApiData()
         mock_get.return_value.json.return_value = image_data
-                
-        a= mockSolutionViai()
+        
+        a = test_data.mockSolutionViai()
         b = a.solutions[0]
         b.images = b._getImages()
         
+        self.assertTrue(len(b.images) == 3)
         
+    @patch('requests.get')
+    def testGetAnnotation(self, mock_get):
+        '''tests loading an Annotation set for an Image from the VIAI'''
         
-        self.assertTrue(b.images[0].name == image_data['images'][0]['name'])
-        self.assertTrue(b.images[0].createTime == image_data['images'][0]['createTime'])
-        self.assertTrue(b.images[0].sourceGcsUri == image_data['images'][0]['sourceGcsUri'])
-        self.assertTrue(b.images[0].etag == image_data['images'][0]['etag'])    
+        mock_get.return_value.status_code = 200
+        mock_get.return_value.json.return_value = test_data.getAnnotationApiData()
+        
+        a= test_data.mockSolutionViai()
+        b = Image(test_data.getImageData(), a)
+        c = b._getAnnotations()
+        
+        self.assertTrue(b.sourceGcsUri == 'gs://bucket1/image1.jpg')
+        self.assertTrue(len(c) == 2)
         
 if __name__ == '__main__':
     unittest.main()

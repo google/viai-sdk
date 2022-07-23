@@ -33,7 +33,7 @@ class Image:
                 exec("self.{} = {}".format(k,v))
             else:
                 exec("self.{} = '{}'".format(k,v))
-                
+        
         self.annotations = self._getAnnotations()
         
     def getGcsBlob(self):
@@ -63,15 +63,16 @@ class Image:
         
         annotations = list()
         
-        data = r.json()
-        if 'annotations' in data.keys(): # if there are annotations
-            self.log.debug("Loading Image Annotations")
-            for a in data['annotations']:
-                annotations.append(Annotation(a, self.VIAI))
-        
+        if r.status_code == 200:
+            data = r.json()
+            if 'annotations' in data.keys():
+                self.log.debug("Loading Image Annotations")
+                for a in data['annotations']:
+                    annotations.append(Annotation(a, self.VIAI))
+            
         else:
-            self.log.debug("No Image Annotations Available")
-        
+            self.log.debug("No Image Annotations Available - {}".format(self.name))
+            
         return annotations 
     
 class Annotation:
