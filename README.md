@@ -65,6 +65,24 @@ Basic tasks for the VIAI SDK.
 'updated', 'upload_from_file', 'upload_from_filename', 'upload_from_string', 'user_project']
 
 ```
+## Development
+
+### Unit Testing
+
+The `nose2` test module is used for unit testing. To run tests, `nose2` uses the `unittest.cfg` file for default settings.
+
+```
+cd viai-sdk
+nose2 
+```
+
+#### Test Coverage
+
+```
+cd viai-sdk
+coverage run -m nose2
+coverage report -m 
+```
 
 ## Contributing
 

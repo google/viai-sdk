@@ -14,6 +14,13 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 
+dependencies = [
+    "google-auth",
+    "google-oauth",
+    "google-cloud",
+    "google-cloud-storage"
+]
+
 [project.optional-dependencies]
 dev = [
     "nose2",
