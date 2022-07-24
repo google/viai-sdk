@@ -29,7 +29,7 @@ class Image:
         
         self.log.debug("Loading Image Options")
         for k,v in data.items():
-            if type(v) is dict:
+            if type(v) is dict: 
                 exec("self.{} = {}".format(k,v))
             else:
                 exec("self.{} = '{}'".format(k,v))
@@ -39,8 +39,8 @@ class Image:
     def getGcsBlob(self):
         '''Returns a GCS blob object for an Image'''
         
-        # we need to massage the soruce string
-        try:
+
+        try:    # pragma: no cover
             self.log.debug("Loading GCS Blob Object")
             bucket,filename = re.sub('gs://','', self.sourceGcsUri).split('/',1)
             storage_client = storage.Client()
@@ -49,7 +49,7 @@ class Image:
             
             return blob
 
-        except Exception as e:
+        except Exception as e:  # pragma: no cover
             self.log.debug("Unable to Load GCS Blob Object")
             raise e          
 
@@ -57,7 +57,7 @@ class Image:
     def _getAnnotations(self):
         '''gets annotations associated with an image
         Returns a list of Annotation objects'''
-        
+    
         annotations_url = "{}/{}".format(self.url, 'annotations')
         r = requests.get(annotations_url, headers=self.VIAI.requestHeader)
         
@@ -92,7 +92,7 @@ class Annotation:
                 else:
                     exec("self.{} = '{}'".format(k,v))
                     
-        except Exception as e:
+        except Exception as e: # pragma: no cover
             self.log.debug("Unable to load Annotation - {}".format(data['name']))
             raise e
                 
@@ -112,7 +112,7 @@ class AnnotationSet:
                 else:
                     exec("self.{} = '{}'".format(k,v))
                     
-        except Exception as e:
+        except Exception as e: # pragma: no cover
             self.log.debug("Unable to load Annotation Set")
             raise e
         
@@ -133,6 +133,6 @@ class AnnotationSpec:
                 else:
                     exec("self.{} = '{}'".format(k,v))
         
-        except Exception as e:
+        except Exception as e: # pragma: no cover
             self.log.debug("Unable to Load Annotation Spec")
             raise e

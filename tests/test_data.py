@@ -60,6 +60,50 @@ def getImageData():
     
     return image_data
 
+def getModuleData():
+    
+    moduleData = {'modules': 
+        [{'name': 'projects/953081663119/locations/us-central1/solutions/8183427551025168384/modules/3552020692041990144', 
+          'createTime': '2022-07-15T18:15:57.678675Z', 
+          'updateTime': '2022-07-15T18:15:57.678675Z', 
+          'displayName': 'Object Detection Module', 
+          'config': {}, 
+          'objectDetection': 
+              {'objectRegions': 
+                  [{'annotationSetId': '5345337351084179456', 
+                    'annotationSet': 'projects/953081663119/locations/us-central1/datasets/6706706469108056064/annotationSets/5345337351084179456'
+                    }], 
+                  'objectRegionPredictions': 
+                      [{'annotationSetId': '7718734354708430848', 
+                        'annotationSet': 'projects/953081663119/locations/us-central1/datasets/6706706469108056064/annotationSets/7718734354708430848'
+                        }], 
+                    'classificationPredictions': 
+                        [{'annotationSetId': '6423949461839413248', 
+                          'annotationSet': 'projects/953081663119/locations/us-central1/datasets/6706706469108056064/annotationSets/6423949461839413248'
+                          }]
+                        }
+              }
+         ]}
+    
+    return moduleData
+
+def getSolutionArtifactData():
+    
+    solutionArtifactApiData = {'solutionArtifacts': 
+        [{'name': 'projects/953081663119/locations/us-central1/solutions/8183427551025168384/solutionArtifacts/3238404791428186112', 
+          'createTime': '2022-07-16T16:40:38.612416Z', 
+          'displayName': 'mycontainer', 
+          'models': 
+              ['projects/953081663119/locations/us-central1/solutions/8183427551025168384/modules/3552020692041990144/models/213111741742055424'], 
+              'exportType': 'CPU_CONTAINER', 
+              'containerExportLocation': 
+                  {'outputUri': 'gcr.io/jduncan-viai-samples/s1h:s1hart'}, 
+              'aiplatformModelName': '//aiplatform.googleapis.com/projects/953081663119/locations/us-central1/models/5085491967115132928', 
+              'purpose': 'unknown'}
+         ]}
+    
+    return solutionArtifactApiData
+
 def getAnnotationApiData():
     
     annotation_api_data = {'annotations': 
@@ -134,6 +178,34 @@ def getAnnotationSetApiData():
     ]}
     
     return annoation_set_api_data
+
+def getAnnotationSpecApiData():
+    
+    annotation_spec_api_data = {'annotationSpecs': 
+        [{'name': 'projects/953081663119/locations/us-central1/datasets/6706706469108056064/annotationSpecs/337000313913344', 
+          'displayName': 'defect', 
+          'createTime': '2022-07-15T18:15:53.943662Z', 
+          'updateTime': '2022-07-15T18:15:53.943662Z', 
+          'color': {'red': 0.003921569, 'green': 0.654902, 'blue': 0.003921569}}, 
+         {'name': 'projects/953081663119/locations/us-central1/datasets/6706706469108056064/annotationSpecs/711905741438451712', 
+          'displayName': 'included', 
+          'createTime': '2022-07-15T18:15:55.397589Z', 
+          'updateTime': '2022-07-15T18:15:55.397589Z', 
+          'color': {'red': 0.44313726, 'green': 0.0627451, 'blue': 0.5019608}}, 
+         {'name': 'projects/953081663119/locations/us-central1/datasets/6706706469108056064/annotationSpecs/1364927687407173632', 
+          'displayName': 'line', 
+          'createTime': '2022-07-15T18:23:19.503174Z',
+          'updateTime': '2022-07-15T18:23:19.503174Z', 
+          'color': {'red': 0.7607843, 'green': 0.6666667, 'blue': 0.22352941}}, 
+         {'name': 'projects/953081663119/locations/us-central1/datasets/6706706469108056064/annotationSpecs/1900011618134130688', 
+          'displayName': 'excluded', 
+          'createTime': '2022-07-15T18:15:56.660784Z', 
+          'updateTime': '2022-07-15T18:15:56.660784Z', 
+          'color': {'red': 0.68235296, 'green': 0.6509804, 'blue': 0.8156863}}
+         ]
+        }
+ 
+    return annotation_spec_api_data
 
 def mockSolutionViai():
     

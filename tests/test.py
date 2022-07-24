@@ -24,7 +24,7 @@ class TestViai(unittest.TestCase):
         self.assertTrue(viai.solutions[0].displayName == 'solution1')
         self.assertTrue(len(viai.solutions) == 3)
         
-    def testImageModel(self):
+    def testImage(self):
         '''Loads an image object from a single image dict'''
                 
         a= test_data.mockSolutionViai()
@@ -34,7 +34,7 @@ class TestViai(unittest.TestCase):
         
     @patch('requests.get')
     def testGetImages(self, mock_get):
-        '''tests loading the image object'''
+        '''Loads an Image list from the VIAI API'''
         
         mock_get.return_value.status_code = 200
         image_data = test_data.getImageApiData()
@@ -47,8 +47,50 @@ class TestViai(unittest.TestCase):
         self.assertTrue(len(b.images) == 3)
         
     @patch('requests.get')
+    def testGetAnnotationSets(self, mock_get):
+        '''Loads a list of AnnotationSets from the VIAI API'''
+        
+        mock_get.return_value.status_code = 200
+        annotationSetData = test_data.getAnnotationSetApiData()
+        mock_get.return_value.json.return_value = annotationSetData
+        
+        a = test_data.mockSolutionViai()
+        b = a.solutions[0]
+        c = b._getAnnotationSets()
+        
+        self.assertTrue(len(c) == 6)
+        
+    @patch('requests.get')
+    def testGetSolutionArtifact(self, mock_get):
+        '''Loads a Solution Artifact from the VIAI API'''
+        
+        mock_get.return_value.status_code = 200
+        solutionArtifactData = test_data.getSolutionArtifactData()
+        mock_get.return_value.json.return_value = solutionArtifactData
+        
+        a = test_data.mockSolutionViai()
+        b = a.solutions[0]
+        c = b._getSolutionArtifacts()[0]
+        
+        self.assertEqual(c.displayName, 'mycontainer')        
+        
+    @patch('requests.get')
+    def testGetModules(self, mock_get):
+        '''Loads Modules for a Solution from the VIAI API'''
+        
+        mock_get.return_value.status_code = 200
+        moduleData = test_data.getModuleData()
+        mock_get.return_value.json.return_value = moduleData
+        
+        a = test_data.mockSolutionViai()
+        b = a.solutions[0]
+        c = b._getModules()
+        
+        self.assertEquals(c[0].displayName, 'Object Detection Module')       
+        
+    @patch('requests.get')
     def testGetAnnotation(self, mock_get):
-        '''tests loading an Annotation set for an Image from the VIAI'''
+        '''Loads an Annotation set for an Image from the VIAI API'''
         
         mock_get.return_value.status_code = 200
         mock_get.return_value.json.return_value = test_data.getAnnotationApiData()
@@ -59,6 +101,30 @@ class TestViai(unittest.TestCase):
         
         self.assertTrue(b.sourceGcsUri == 'gs://bucket1/image1.jpg')
         self.assertTrue(len(c) == 2)
+        
+    @patch('requests.get')
+    def testGetAnnotationSpecs(self, mock_get):
+        '''Loads an AnnotationSpec list from the VIAI API'''
+        
+        mock_get.return_value.status_code = 200
+        annotationSpecData = test_data.getAnnotationSpecApiData()
+        mock_get.return_value.json.return_value = annotationSpecData
+        
+        a = test_data.mockSolutionViai()
+        b = a.solutions[0]
+        c = b._getAnnotationSpecs()
+        
+        self.assertTrue(len(c) == 4) 
+        
+    def testChangeLogLevel(self):
+        '''Changes the VIAI object log level with the setLogLevel function'''
+        
+        a= test_data.mockSolutionViai()
+        old_level = a.log.level
+        a.setLogLevel('debug')
+        
+        self.assertNotEqual(old_level, a.log.level)
+        self.assertEquals(a.log.level, 10)
         
 if __name__ == '__main__':
     unittest.main()

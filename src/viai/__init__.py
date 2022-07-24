@@ -35,7 +35,7 @@ class VIAI:
         self.projectId = str()
         self.region = region
         
-        if connect == True:
+        if connect == True: # pragma: no cover
             self.credentials = self._getAuthCredentials(keyfile)     
             self.solutions = self._getSolutions()
             
@@ -72,10 +72,10 @@ class VIAI:
             self.log.setLevel(loglevel)
             self.log.info("Set logging level to {}".format(loglevel))
             
-        except Exception as e:
+        except Exception as e:  # pragma: no cover
             raise e
                        
-    def _getAuthCredentials(self, keyfile):
+    def _getAuthCredentials(self, keyfile): # pragma: no cover
         '''internal function to create a valid Google authenticated session and generate a JWT token
         inputs:
         keyfile - a service account json keyfile for a service acccount with at least VIAI admin role bindings'''
@@ -138,14 +138,14 @@ class VIAI:
         
                 return solutions
             
-            else:
+            else:   # pragma: no cover
                 self.log.debug("Unable to Access VIAI API - {}".format(solutionsUrl))
                 
-        except Exception as e: 
+        except Exception as e: # pragma: no cover
             self.log.debug("Unable to Get Solutions")
             raise e
     
-class AuthCredentialException(Exception):
+class AuthCredentialException(Exception):   # pragma: no cover
     '''An exception for issues with GCP Authentication'''
     
     def __init__(self):

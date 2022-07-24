@@ -39,7 +39,7 @@ class Solution:
         self.url = "{}/{}".format(self.apiUrl, data['name'])        
         self.datasetUrl = "{}/projects/{}/locations/{}/datasets/{}".format(self.apiUrl, VIAI.projectId, VIAI.region, self.datasetId)     
         
-    def load(self):
+    def load(self): # pragma: no cover
         '''Loads the various API endpoints for the solution. This is used to save time at instance
         startup for busy environments'''
         
@@ -51,7 +51,7 @@ class Solution:
             self.modules = self._getModules()
             self.solutionArtifacts = self._getSolutionArtifacts()
         
-        except Exception as e:
+        except Exception as e: # pragma: no cover
             raise e
         
     def _getSolutionArtifacts(self):
@@ -71,7 +71,7 @@ class Solution:
                     solutionArtifacts.append(SolutionArtifact(a, self.VIAI))
                 
             return solutionArtifacts
-        else: 
+        else: # pragma: no cover
             self.log.debug("Unable to Retrieve Solution Artifact - Response Code: {}",format(r.status_code)) 
         
         
@@ -89,7 +89,7 @@ class Solution:
             for a in data['annotationSets']:
                 self.log.debug("Annotation Set Retrieved - {}".format(a['name']))
                 annotationSets.append(AnnotationSet(a, self.VIAI))
-        else:
+        else: # pragma: no cover
             self.log.debug("No Annotation Sets Available")
             
         return annotationSets
@@ -108,7 +108,7 @@ class Solution:
             for a in data['annotationSpecs']:
                 self.log.debug("Loading Annotation Spec - {}".format(a['name']))
                 annotationSpecs.append(AnnotationSpec(a, self.VIAI))
-        else:
+        else: # pragma: no cover
             self.log.debug("No Annation Specs Available")
             
         return annotationSpecs 
@@ -127,7 +127,7 @@ class Solution:
             for a in data['images']:
                 self.log.debug("Loading Image - {}".format(a['name']))
                 images.append(Image(a, self.VIAI))
-        else:
+        else: # pragma: no cover
             self.log.debug("No Images Available")
             
         return images
@@ -147,7 +147,7 @@ class Solution:
             for a in data['modules']:
                 self.log.debug("Loading Module - {}".format(a['name']))
                 modules.append(Module(a, self.VIAI))
-        else:
+        else: # pragma: no cover
             self.log.debug("No Modules Available")
             
         return modules        
@@ -171,6 +171,6 @@ class SolutionArtifact:
                 else:
                     exec("self.{} = '{}'".format(k,v))
         
-        except Exception as e:
+        except Exception as e: # pragma: no cover
             self.log.debug("Unable to Load Solution Artifacts")
             raise e

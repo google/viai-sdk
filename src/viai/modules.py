@@ -117,7 +117,7 @@ class ModelEvaluation:
                 else:
                     exec("self.{} = '{}'".format(k,v))
 
-        except Exception as e:
+        except Exception as e: # pragma: no cover
             self.log.debug("Unable to Load Model Evaluations")
             raise e
      
@@ -141,7 +141,7 @@ class SolutionArtifact:
                 else:
                     exec("self.{} = '{}'".format(k,v))
         
-        except Exception as e:
+        except Exception as e: # pragma: no cover
             self.log.debug("Unable to Load Solution Artifacts")
             raise e
         
