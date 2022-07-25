@@ -88,16 +88,29 @@ class Model:
 
         evaluations = list()
 
-        if self.evaluationIds:
-            for evaluation in self.evaluationIds: 
-                self.log.debug("Loading Model Evaluation - {}".format(evaluation))
-                url = "{}/modelEvaluations/{}".format(self.url, evaluation)
-                r = requests.get(url, headers=self.requestHeader)        
-                
-                data = r.json()
-                evaluations.append(ModelEvaluation(data, self.VIAI))
-                            
+        try:
+            if self.evaluationIds:
+                for evaluation in self.evaluationIds: 
+                    self.log.debug("Loading Model Evaluation - {}".format(evaluation))
+                    url = "{}/modelEvaluations/{}".format(self.url, evaluation)
+                    r = requests.get(url, headers=self.requestHeader)
+                    
+                    if r.status_code == 200:       
+                        if len(r.json()) > 0:
+                            data = r.json()
+                            evaluations.append(ModelEvaluation(data, self.VIAI))
+                        else:
+                            self.log.debug("No data in Evaluation ID")
+                    else:
+                        self.log.debug("Non-OK response code from Model Evaluations")
+                                
             return evaluations
+        
+        except AttributeError:
+            pass
+        
+        except Exception as e:  # pragma: no cover
+            raise e
                 
 class ModelEvaluation:
     '''A VIAI Model Evaluation'''

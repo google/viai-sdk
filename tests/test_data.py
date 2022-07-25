@@ -60,7 +60,7 @@ def getImageData():
     
     return image_data
 
-def getModuleData():
+def getModuleApiData():
     
     moduleData = {'modules': 
         [{'name': 'projects/953081663119/locations/us-central1/solutions/8183427551025168384/modules/3552020692041990144', 
@@ -207,6 +207,23 @@ def getAnnotationSpecApiData():
  
     return annotation_spec_api_data
 
+def getModelApiData():
+    
+    ModelApiData = {'models': [{
+        'name': 'projects/953081663119/locations/us-central1/solutions/8183427551025168384/modules/3552020692041990144/models/213111741742055424', 
+        'createRequestTime': '2022-07-15T20:01:27.082718Z', 
+        'createTime': '2022-07-15T20:01:27.082718Z', 
+        'updateTime': '2022-07-16T05:28:39.669807Z', 
+        # 'evaluationIds': ['8985701603394715648'], 
+        'config': 
+            {'model_mode': 'MEDIUM_LEARNING_CAPACITY', 
+             'max_training_wall_clock_seconds': 86400}, 
+        'trainingDuration': '279972s'}
+        ]
+    }
+    
+    return ModelApiData
+
 def mockSolutionViai():
     
     mock_get_patcher = patch('requests.get')
@@ -235,4 +252,19 @@ def mockImageViai():
     mock_viai.images = mock_viai._getImages()
     mock_get_patcher.stop()
     
-    return mock_viai 
+    return mock_viai
+
+def mockModuleViai():
+    
+    mock_get_patcher = patch('requests.get')
+    mock_get = mock_get_patcher.start()    
+    
+    mock_get.return_value.status_code = 200
+    mock_get.return_value.json.return_value = getModuleApiData()
+    
+    a = mockSolutionViai()  # a VIAI instance with mock'd solution data
+    solution1 = a.solutions[0]
+    solution1.modules = a.solutions[0]._getModules()
+    mock_get_patcher.stop()
+    
+    return a
