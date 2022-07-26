@@ -84,4 +84,4 @@ coverage report -m
 
 ## Contributing
 
-Merge requests are always welcome, and reach out to me at jamieduncan@google.com with ideas and questions!
+Merge requests are always welcome, and reach out to me at jamieduncan@google.com with ideas and questions! Official policies are outlines in [CONTRIBUTING.md](CONTRIBUTING.md)
