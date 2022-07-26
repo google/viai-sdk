@@ -10,6 +10,23 @@ The current pre-alpha design: ![VIAI-SDK Class Degign](img/viai-sdk.drawio.png)
 
 Basic tasks for the VIAI SDK.
 
+### GCP Credentials
+
+You can supply a `keyfile` parameter to supply a Service Account keyfile or specify the standard `GOOGLE_APPLICATION_CREDENTIALS` environment variable. 
+
+If you supply the `keyfile` parameter, it automatically sets the `GOOGLE_APPLICATION_CREDENTIALS` to the same value. 
+
+### Project ID
+
+The GCP Project ID is read from the service account keyfile.
+
+### Service Account Requirements
+
+The following roles should be bound for the service account:
+
+* [`roles/storage.objectAdmin`](https://cloud.google.com/iam/docs/understanding-roles#cloud-storage-roles)
+* [`roles/visualinspection.editor`]()
+
 ### Starting out
 
 ```
