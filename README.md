@@ -70,7 +70,7 @@ utionArtifacts', 'solutionType', 'updateTime', 'url']
 >>> type(d)
 <class 'google.cloud.storage.blob.Blob'>
 >>> d.public_url
-'https://storage.googleapis.com/jduncan_viai_samples_style1/IMG_1854.HEIC.jpg'
+'https://storage.googleapis.com/myproejct/myimage.jpg'
 ```
 ## Development
 
