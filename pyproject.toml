@@ -1,6 +1,6 @@
 [project]
 name = "viai-sdk"
-version = "0.0.1"
+version = "0.1.0"
 authors = [
   { name="Jamie Duncan", email="jamieduncan@google.com" },
 ]
