@@ -57,20 +57,11 @@ utionArtifacts', 'solutionType', 'updateTime', 'url']
 ```
 ## Development
 
-### Unit Testing
-
-The `nose2` test module is used for unit testing. To run tests, `nose2` uses the `unittest.cfg` file for default settings.
+#### Testing and Code Coverage
 
 ```
 cd viai-sdk
-nose2 
-```
-
-#### Test Coverage
-
-```
-cd viai-sdk
-coverage run -m nose2
+PYTHONPATH=$PYTHONPATH:$PWD/src;coverage run -m nose2 -v
 coverage report -m 
 ```
 
