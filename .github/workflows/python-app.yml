@@ -36,4 +36,5 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with nose2
       run: |
-        PYTHONPATH=$PYTHONPATH:/home/runner/work/viai-sdk/viai-sdk/src;coverage run -m nose2 -v
+        PYTHONPATH=${{env.PYTHONPATH}}:${{env.PWD/src}};coverage run -m nose2 -v
+        
