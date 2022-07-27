@@ -31,6 +31,7 @@ jobs:
     - name: Set PYTHONPATH
       run: |
         echo "PYTHONPATH=$PYTHONPATH:$PWD/src"
+        echo $PYTHONPATH
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
