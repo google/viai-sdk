@@ -28,10 +28,6 @@ jobs:
         python -m pip install --upgrade pip
         pip install nose2 coverage flake8
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-    - name: Set PYTHONPATH
-      run: |
-        echo "PYTHONPATH=$PYTHONPATH:$PWD/src"
-        echo $PYTHONPATH
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
@@ -40,5 +36,5 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with nose2
       run: |
-        coverage run -m nose2 -v
+        PYTHONPATH=$PWD/src;coverage run -m nose2 -v
 
