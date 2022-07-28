@@ -5,9 +5,6 @@ on:
     tags:
       - "v*.*.*"
 
-env:
-  GITHUB_TOKEN: ${{secrets.GH_API_TOKEN}}
-
 jobs:
 
   build:
@@ -19,4 +16,5 @@ jobs:
     - uses: ncipollo/release-action@v1
       with:
         generateReleaseNotes: true
-        prerelease: true
+        # prerelease: true
+        token: ${{secrets.GH_API_TOKEN}}
