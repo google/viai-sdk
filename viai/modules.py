@@ -19,7 +19,7 @@ import requests
 class Module:
     '''A VIAI Solution Module'''
     
-    def __init__(self, data, VIAI):
+    def __init__(self, data, VIAI, load=True):
         
         self.url = "{}/{}".format(VIAI.apiUrl, data['name'])
         self.VIAI = VIAI # the parent VIAI object
@@ -33,7 +33,8 @@ class Module:
             else:
                 exec("self.{} = '{}'".format(k,v)) 
         
-        self.models = self._getModels()
+        if load:
+            self.models = self._getModels()
                 
     def _getModels(self):
         '''a getter function for the VIAI Model Class'''

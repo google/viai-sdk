@@ -98,7 +98,7 @@ class TestViai(unittest.TestCase):
         
         a = test_data.mockSolutionViai()
         b = a.solutions[0]
-        c = b._getModules()
+        c = b._getModules(load=False)
         
         self.assertEquals(c[0].displayName, 'Object Detection Module')       
         
@@ -130,19 +130,16 @@ class TestViai(unittest.TestCase):
         
         self.assertTrue(len(c) == 4)
         
-    # @patch('requests.get')
-    # def testGetModels(self, mock_get):
-    #     '''Loads test Model objects within a test Module'''
+    @patch('requests.get')
+    def testGetModels(self, mock_get):
+        '''Loads test Model objects'''
         
-    #     mock_get.return_value.status_code = 200
-    #     modelData = test_data.getModelApiData()
-    #     mock_get.return_value.json.return_value = modelData
+        viai = test_data.mockSolutionViai()
+        data = test_data.getModelApiData()['models'][0]
+        m = Model(data, viai)
         
-    #     a = test_data.mockModuleViai()
-    #     b = a.solutions[0].modules[0]
-    #     c = b._getModels()
-                
-    #     self.assertEqual(c[0].createTime, '2022-07-15T20:01:27.082718Z')
+        self.assertEqual(m.evaluationIds[0], '3344556677889900112')
+        
         
     def testChangeLogLevel(self):
         '''Changes the VIAI object log level with the setLogLevel function'''
