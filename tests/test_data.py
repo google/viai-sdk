@@ -65,6 +65,8 @@ def getImageApiData():
     
     return image_api_data
 
+
+
 def getImageData():
     
     image_data = {'name': 'projects/012456789012/locations/myregion/datasets/012345678910012345678910/images/012345678910123456', 
@@ -235,7 +237,7 @@ def getModelApiData():
         'trainingDuration': '279972s'}
         ]
     }
-    
+
     return ModelApiData
 
 def mockSolutionViai():

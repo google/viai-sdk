@@ -84,4 +84,12 @@ coverage report -m
 
 ## Contributing
 
-Merge requests are always welcome, and reach out to me at jamieduncan@google.com with ideas and questions! Official policies are outlines in [CONTRIBUTING.md](CONTRIBUTING.md)
+Pull Requests are always welcome, and reach out to me at jamieduncan@google.com with ideas and questions! Official policies are outlines in [CONTRIBUTING.md](CONTRIBUTING.md)
+
+## Automated Workflows
+
+Github Actions are used to automate workflows for the `main` branch.
+
+* If there's a push to main, flake8 lints the code and all unit tests are automatically run and test coverage is recorded. 
+* If a tag using the syntax `v*.*.*` is created, a corresponding Release if published.
+* If a Release is published, the tag is used to build and publish a new version to [PyPI](https://pypi.org/).

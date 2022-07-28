@@ -132,7 +132,7 @@ class Solution:
             
         return images
     
-    def _getModules(self):
+    def _getModules(self, load=True):
         
         '''Pulls associated modules for a solution.
         Returns a list of Module objects'''
@@ -146,7 +146,7 @@ class Solution:
         if 'modules' in data.keys():
             for a in data['modules']:
                 self.log.debug("Loading Module - {}".format(a['name']))
-                modules.append(Module(a, self.VIAI))
+                modules.append(Module(a, self.VIAI, load=load))
         else: # pragma: no cover
             self.log.debug("No Modules Available")
             
