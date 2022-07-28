@@ -5,6 +5,9 @@ on:
     tags:
       - "v*.*.*"
 
+env:
+  GITHUB_TOKEN: ${{secrets.GH_API_TOKEN}}
+
 jobs:
 
   build:
