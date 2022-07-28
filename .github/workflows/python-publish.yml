@@ -6,7 +6,7 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: Upload Python Package
+name: Publis Python Package to PyPI
 
 on:
   release:
@@ -36,4 +36,4 @@ jobs:
       env:
         TWINE_USERNAME: __token__
         TWINE_PASSWORD: ${{secrets.PYPI_API_TOKEN}}
-      run: twine upload dist/*
+      run: twine --non-interactive upload dist/*
