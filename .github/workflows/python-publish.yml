@@ -32,8 +32,7 @@ jobs:
         pip install build twine
     - name: Build package
       run: python -m build
-    - name: Publish to PyPI
-      env:
-        TWINE_USERNAME: __token__
-        TWINE_PASSWORD: ${{secrets.PYPI_API_TOKEN}}
-      run: twine --non-interactive upload dist/*
+    - name: Publish to Production PyPI
+      uses: pypa/gh-action-pypi-publish@release/v1.5
+      with:
+        password: ${{ secrets.PYPI_API_TOKEN }}
